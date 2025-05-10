@@ -185,7 +185,51 @@
 #define ArrayCount(x) (sizeof(x)/sizeof((x)[0]))
 
 ////////////////////////////////
-// NOTE(xkazu0x): Enums
+// NOTE(xkazu0x): Base types
+
+#include <stdint.h>
+typedef uint8_t  u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int8_t   s8;
+typedef int16_t  s16;
+typedef int32_t  s32;
+typedef int64_t  s64;
+typedef s8       b8;
+typedef s16      b16;
+typedef s32      b32;
+typedef s64      b64;
+typedef float    f32;
+typedef double   f64;
+
+////////////////////////////////
+// NOTE(xkazu0x): Constants
+
+global s8  s8_min  = (s8) 0x80;
+global s16 s16_min = (s16)0x8000;
+global s32 s32_min = (s32)0x80000000;
+global s64 s64_min = (s64)0x8000000000000000llu;
+
+global s8  s8_max  = (s8) 0x7F;
+global s16 s16_max = (s16)0x7FFF;
+global s32 s32_max = (s32)0x7FFFFFFF;
+global s64 s64_max = (s64)0x7FFFFFFFFFFFFFFFllu;
+
+global u8  u8_max  = 0xFF;
+global u16 u16_max = 0xFFFF;
+global u32 u32_max = 0xFFFFFFFF;
+global u64 u64_max = 0xFFFFFFFFFFFFFFFFllu;
+
+#include <float.h>
+global f32 f32_max = FLT_MAX;
+global f32 f32_min = -FLT_MAX;
+
+global f32 pi32 = 3.14159265359f;
+global f64 pi64 = 3.14159265359;
+
+////////////////////////////////
+// NOTE(xkazu0x): Context enums
 
 enum Operating_System {
     OperatingSystem_Null,
@@ -212,8 +256,161 @@ enum Compiler {
     Compiler_Count,
 };
 
+////////////////////////////////
+// NOTE(xkazu0x): Context functions
+
 internal Operating_System operating_system_from_context(void);
 internal Architecture architecture_from_context(void);
 internal Compiler compiler_from_context(void);
+
+////////////////////////////////
+// NOTE(xkazu0x): Math functions
+
+#include <math.h>
+#define square(x) ((x)*(x))
+
+#define sqrt_f32(x) sqrtf(x)
+#define cbrt_f32(x) cbrtf(x)
+#define ceil_f32(x) ceilf(x)
+#define floor_f32(x) floorf(x)
+#define round_f32(x) roundf(x)
+#define abs_f32(x) fabsf(x)
+
+#define sin_f32(x) sinf(x)
+#define cos_f32(x) cosf(x)
+#define tan_f32(x) tanf(x)
+
+////////////////////////////////
+// NOTE(xkazu0x): Vector types
+
+union Vec2 {
+    struct {
+        f32 x, y;
+    };
+    struct {
+        f32 u, v;
+    };
+    f32 e[2];
+};
+
+union Vec3 {
+    struct {
+        f32 x, y, z;
+    };
+    struct {
+        f32 r, g, b;
+    };
+    
+    struct {
+        Vec2 xy;
+        f32 _z0;
+    };
+    struct {
+        Vec2 rg;
+        f32 _b0;
+    };
+    
+    f32 e[3];
+};
+
+union Vec4 {
+    struct {
+        f32 x, y, z, w;
+    };
+    struct {
+        f32 r, g, b, a;
+    };
+    
+    struct {
+        Vec2 xy;
+        Vec2 zw;
+    };
+    struct {
+        Vec2 xyz;
+        f32 _w0;
+    };
+    
+    struct {
+        Vec2 rg;
+        Vec2 ba;
+    };
+    struct {
+        Vec2 rgb;
+        f32 _a0;
+    };
+    
+    f32 e[4];
+};
+
+////////////////////////////////
+// NOTE(xkazu0x): Vector functions
+
+internal Vec2 make_vec2(f32 x);
+internal Vec3 make_vec3(f32 x);
+internal Vec4 make_vec4(f32 x);
+
+internal Vec2 make_vec2(f32 x, f32 y);
+internal Vec3 make_vec3(f32 x, f32 y, f32 z);
+internal Vec4 make_vec4(f32 x, f32 y, f32 z, f32 w);
+
+internal Vec3 make_vec3(Vec2 xy, f32 z);
+internal Vec4 make_vec4(Vec2 xy, f32 z, f32 w);
+internal Vec4 make_vec4(Vec3 xyz, f32 w);
+
+internal Vec2 operator+(Vec2 a, Vec2 b);
+internal Vec3 operator+(Vec3 a, Vec3 b);
+internal Vec4 operator+(Vec4 a, Vec4 b);
+
+internal Vec2 &operator+=(Vec2 &a, Vec2 b);
+internal Vec3 &operator+=(Vec3 &a, Vec3 b);
+internal Vec4 &operator+=(Vec4 &a, Vec4 b);
+
+internal Vec2 operator-(Vec2 v);
+internal Vec3 operator-(Vec3 v);
+internal Vec4 operator-(Vec4 v);
+
+internal Vec2 operator-(Vec2 a, Vec2 b);
+internal Vec3 operator-(Vec3 a, Vec3 b);
+internal Vec4 operator-(Vec4 a, Vec4 b);
+
+internal Vec2 &operator-=(Vec2 &a, Vec2 b);
+internal Vec3 &operator-=(Vec3 &a, Vec3 b);
+internal Vec4 &operator-=(Vec4 &a, Vec4 b);
+
+internal Vec2 operator*(f32 s, Vec2 v);
+internal Vec3 operator*(f32 s, Vec3 v);
+internal Vec4 operator*(f32 s, Vec4 v);
+
+internal Vec2 operator*(Vec2 v, f32 s);
+internal Vec3 operator*(Vec3 v, f32 s);
+internal Vec4 operator*(Vec4 v, f32 s);
+
+internal Vec2 &operator*=(Vec2 &v, f32 s);
+internal Vec3 &operator*=(Vec3 &v, f32 s);
+internal Vec4 &operator*=(Vec4 &v, f32 s);
+
+internal b32 operator==(Vec2 a, Vec2 b);
+internal b32 operator==(Vec3 a, Vec3 b);
+internal b32 operator==(Vec4 a, Vec4 b);
+
+internal b32 operator!=(Vec2 a, Vec2 b);
+internal b32 operator!=(Vec3 a, Vec3 b);
+internal b32 operator!=(Vec4 a, Vec4 b);
+
+internal Vec2 hadamard(Vec2 a, Vec2 b);
+internal Vec3 hadamard(Vec3 a, Vec3 b);
+internal Vec4 hadamard(Vec4 a, Vec4 b);
+
+internal f32 dot(Vec2 a, Vec2 b);
+internal f32 dot(Vec3 a, Vec3 b);
+internal f32 dot(Vec4 a, Vec4 b);
+
+internal f32 length_squared(Vec2 v);
+internal f32 length_squared(Vec3 v);
+internal f32 length_squared(Vec4 v);
+
+internal f32 length(Vec2 v);
+internal f32 length(Vec3 v);
+internal f32 length(Vec4 v);
 
 #endif // BASE_H
