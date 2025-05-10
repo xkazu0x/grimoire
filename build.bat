@@ -1,6 +1,6 @@
 @echo off
 
-set compile= call cl /Zi /Od /Ob1 /I..\src\ /nologo /FC
+set compile= call cl /Od /Ob1 /Zi /DBUILD_DEBUG=1 /I..\src\ /nologo /FC
 set compile_link= /link
 set compile_out= /out:
 

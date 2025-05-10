@@ -57,6 +57,24 @@ int main(void) {
             printf("null\n");
         } break;
     }
+
+    long long array[] {
+        KB(1), MB(1), GB(1), TB(1),
+        Thousand(1), Million(1), Billion(1),
+    };
+
+    long long min_value = array[0];
+    long long max_value = array[0];
     
+    for (int index = 0;
+         index < ArrayCount(array);
+         ++index) {
+        min_value = Min(min_value, array[index]);
+        max_value = Max(max_value, array[index]);
+    }
+    
+    printf("min value: %lld\n", min_value);
+    printf("max value: %lld\n", max_value);
+        
     return(0);
 }

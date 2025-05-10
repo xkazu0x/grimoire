@@ -148,24 +148,44 @@
 #endif
 
 ////////////////////////////////
-// NOTE(xkazu0x): Unsupported errors
-
-#if ARCH_X86
-# error You tried to build in x86 (32 bit) mode, but currently, only building in x64 (64 bit) mode is supported.
-#endif
-#if !ARCH_X64
-# error You tried to build with an unsupported architecture. Currently, only building in x64 mode is supported.
-#endif
-
-////////////////////////////////
-// NOTE(xkazu0x): Codebase keywords
+// NOTE(xkazu0x): Helper macros
 
 #define internal static
 #define global   static
 #define local    static
 
+#if COMPILER_MSVC
+# define Trap() __debugbreak()
+#elif COMPILER_CLANG || COMPILER_GCC
+# define Trap() __builtin_trap()
+#else
+# error Unknown trap intrinsic for this compiler.
+#endif
+
+#define AssertAlways(x) do {if (!(x)) {Trap();}} while(0)
+#if BUILD_DEBUG
+# define Assert(x) AssertAlways(x)
+#else
+# define Assert(x) (void)(x)
+#endif
+#define InvalidPath        Assert(!"Invalid Path!")
+#define NotImplemented     Assert(!"Not Implemented!")
+
+#define KB(x) ((x)*1024LL)
+#define MB(x) (KB(x)*1024LL)
+#define GB(x) (MB(x)*1024LL)
+#define TB(x) (GB(x)*1024LL)
+#define Thousand(x) ((x)*1000)
+#define Million(x)  ((x)*1000000)
+#define Billion(x)  ((x)*1000000000)
+
+#define Min(a, b) ((a)<(b)?(a):(b))
+#define Max(a, b) ((a)>(b)?(a):(b))
+
+#define ArrayCount(x) (sizeof(x)/sizeof((x)[0]))
+
 ////////////////////////////////
-// NOTE(xkazu0x): Environment enums
+// NOTE(xkazu0x): Enums
 
 enum Operating_System {
     OperatingSystem_Null,
