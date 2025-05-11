@@ -148,6 +148,16 @@
 #endif
 
 ////////////////////////////////
+// NOTE(xkazu0x): Unsupported errors
+
+#if ARCH_X86
+# error You tried to build in x86 (32 bit) mode, but currently, only building in x64 (64 bit) mode is supported.
+#endif
+#if !ARCH_X64
+# error You tried to build with an unsupported architecture. Currently, only building in x64 mode is supported.
+#endif
+
+////////////////////////////////
 // NOTE(xkazu0x): Helper macros
 
 #define internal static
@@ -171,10 +181,10 @@
 #define InvalidPath        Assert(!"Invalid Path!")
 #define NotImplemented     Assert(!"Not Implemented!")
 
-#define KB(x) ((x)*1024LL)
-#define MB(x) (KB(x)*1024LL)
-#define GB(x) (MB(x)*1024LL)
-#define TB(x) (GB(x)*1024LL)
+#define KB(x) (((u64)(x)) << 10)
+#define MB(x) (((u64)(x)) << 20)
+#define GB(x) (((u64)(x)) << 30)
+#define TB(x) (((u64)(x)) << 40)
 #define Thousand(x) ((x)*1000)
 #define Million(x)  ((x)*1000000)
 #define Billion(x)  ((x)*1000000000)
@@ -263,19 +273,22 @@ internal Operating_System operating_system_from_context(void);
 internal Architecture architecture_from_context(void);
 internal Compiler compiler_from_context(void);
 
+internal char *string_from_operating_system(Operating_System os);
+internal char *string_from_architecture(Architecture arch);
+internal char *string_from_compiler(Compiler compiler);
+
 ////////////////////////////////
 // NOTE(xkazu0x): Math functions
 
-#include <math.h>
 #define square(x) ((x)*(x))
 
+#include <math.h>
 #define sqrt_f32(x) sqrtf(x)
 #define cbrt_f32(x) cbrtf(x)
 #define ceil_f32(x) ceilf(x)
 #define floor_f32(x) floorf(x)
 #define round_f32(x) roundf(x)
 #define abs_f32(x) fabsf(x)
-
 #define sin_f32(x) sinf(x)
 #define cos_f32(x) cosf(x)
 #define tan_f32(x) tanf(x)
@@ -290,6 +303,7 @@ union Vec2 {
     struct {
         f32 u, v;
     };
+    
     f32 e[2];
 };
 
@@ -326,13 +340,13 @@ union Vec4 {
         Vec2 zw;
     };
     struct {
-        Vec2 xyz;
-        f32 _w0;
-    };
-    
-    struct {
         Vec2 rg;
         Vec2 ba;
+    };
+
+    struct {
+        Vec2 xyz;
+        f32 _w0;
     };
     struct {
         Vec2 rgb;
@@ -389,6 +403,10 @@ internal Vec2 &operator*=(Vec2 &v, f32 s);
 internal Vec3 &operator*=(Vec3 &v, f32 s);
 internal Vec4 &operator*=(Vec4 &v, f32 s);
 
+internal Vec2 operator/(Vec2 a, Vec2 b);
+internal Vec3 operator/(Vec3 a, Vec3 b);
+internal Vec4 operator/(Vec4 a, Vec4 b);
+
 internal b32 operator==(Vec2 a, Vec2 b);
 internal b32 operator==(Vec3 a, Vec3 b);
 internal b32 operator==(Vec4 a, Vec4 b);
@@ -412,5 +430,9 @@ internal f32 length_squared(Vec4 v);
 internal f32 length(Vec2 v);
 internal f32 length(Vec3 v);
 internal f32 length(Vec4 v);
+
+internal Vec2 normalize(Vec2 v);
+internal Vec3 normalize(Vec3 v);
+internal Vec4 normalize(Vec4 v);
 
 #endif // BASE_H

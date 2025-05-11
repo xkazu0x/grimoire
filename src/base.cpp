@@ -42,6 +42,69 @@ compiler_from_context(void) {
     return(result);
 }
 
+internal char *
+string_from_operating_system(Operating_System os) {
+    char *result;
+    switch (os) {
+        case OperatingSystem_Windows: {
+            result = "windows";
+        } break;
+        case OperatingSystem_Linux: {
+            result = "linux";
+        } break;
+        case OperatingSystem_Mac: {
+            result = "mac";
+        } break;
+        default: {
+            result = "<null>";
+        } break;
+    }
+    return(result);
+}
+
+internal char *
+string_from_architecture(Architecture arch) {
+    char *result;
+    switch (arch) {
+        case Architecture_x64: {
+            result = "x64";
+        } break;
+        case Architecture_x86: {
+            result = "x86";
+        } break;
+        case Architecture_arm64: {
+            result = "arm64";
+        } break;
+        case Architecture_arm32: {
+            result = "arm32";
+        } break;
+        default: {
+            result = "<null>";
+        } break;
+    }
+    return(result);
+}
+
+internal char *
+string_from_compiler(Compiler compiler) {
+    char *result;
+    switch (compiler) {
+        case Compiler_msvc: {
+            result = "msvc";
+        } break;
+        case Compiler_gcc: {
+            result = "gcc";
+        } break;
+        case Compiler_clang: {
+            result = "clang";
+        } break;
+        default: {
+            result = "<null>";
+        } break;
+    }
+    return(result);
+}
+
 ////////////////////////////////
 // NOTE(xkazu0x): Vector functions
 
@@ -288,6 +351,33 @@ operator*=(Vec4 &v, f32 s) {
     return(v);
 }
 
+internal Vec2
+operator/(Vec2 a, Vec2 b) {
+    Vec2 result;
+    result.x = a.x/b.x;
+    result.y = a.y/b.y;
+    return(result);
+}
+
+internal Vec3
+operator/(Vec3 a, Vec3 b) {
+    Vec3 result;
+    result.x = a.x/b.x;
+    result.y = a.y/b.y;
+    result.z = a.z/b.z;
+    return(result);
+}
+
+internal Vec4
+operator/(Vec4 a, Vec4 b) {
+    Vec4 result;
+    result.x = a.x/b.x;
+    result.y = a.y/b.y;
+    result.z = a.z/b.z;
+    result.w = a.w/b.w;
+    return(result);
+}
+
 internal b32
 operator==(Vec2 a, Vec2 b) {
     b32 result = ((a.x == b.x) &&
@@ -414,5 +504,35 @@ length(Vec3 v) {
 internal f32
 length(Vec4 v) {
     f32 result = sqrt_f32(length_squared(v));
+    return(result);
+}
+
+internal Vec2
+normalize(Vec2 v) {
+    Vec2 result;
+    f32 len = length(v);
+    result.x = v.x/len;
+    result.y = v.y/len;
+    return(result);
+}
+
+internal Vec3
+normalize(Vec3 v) {
+    Vec3 result;
+    f32 len = length(v);
+    result.x = v.x/len;
+    result.y = v.y/len;
+    result.z = v.z/len;
+    return(result);
+}
+
+internal Vec4
+normalize(Vec4 v) {
+    Vec4 result;
+    f32 len = length(v);
+    result.x = v.x/len;
+    result.y = v.y/len;
+    result.z = v.z/len;
+    result.w = v.w/len;
     return(result);
 }
