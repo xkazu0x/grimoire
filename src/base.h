@@ -107,6 +107,10 @@
 # define BUILD_DEBUG 1
 #endif
 
+#if !defined(BUILD_CONSOLE_INTERFACE)
+# define BUILD_CONSOLE_INTERFACE 0
+#endif
+
 ////////////////////////////////
 // NOTE(xkazu0x): Zero all undefined options
 
